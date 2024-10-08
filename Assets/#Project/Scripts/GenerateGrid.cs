@@ -12,8 +12,10 @@ public class GenerateGrid : MonoBehaviour
     [SerializeField] float gapY = 0.5f;
 
     [Header("Grid Elements")]
-    [SerializeField] GameObject buttonPrefab; 
-    [SerializeField] Transform parentCanvas; 
+    [SerializeField] private GameObject buttonPrefab; 
+    [SerializeField] private Transform parentCanvas; 
+
+    [SerializeField, Space(20)] private bool debug;
 
     private List<Button> gridButtons = new List<Button>();
     public char[,] grid;
@@ -79,6 +81,12 @@ public class GenerateGrid : MonoBehaviour
 
                 TMP_Text buttonText = newButton.GetComponentInChildren<TMP_Text>();
                 buttonText.text = grid[x, y].ToString();
+                if (debug && x == populateGrid.fx && y == populateGrid.fy) 
+                {
+                    ColorBlock colors = button.colors; 
+                    colors.normalColor = Color.green; 
+                    button.colors = colors; // we need to do this in this way because it's a value type
+                }
             }
         }
     }

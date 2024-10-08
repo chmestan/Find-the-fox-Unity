@@ -4,26 +4,24 @@ using System.Collections.Generic;
 public class PopulateGrid : MonoBehaviour
 {
     [Header("Word to find")]
-    public string word = "fox";  
+    internal string word = "fox";
 
-    [SerializeField, Space(10)] bool debug;
-
-
+    internal int fx, fy;
     private GenerateGrid generateGrid;
 
+    [SerializeField, Space(10)] bool debug;
 
     public void PlaceWordAndFillGrid()
     {
         generateGrid = GetComponent<GenerateGrid>(); 
         PlaceFirstLetter();  
-        // FillRandomLetters(); 
+        FillRandomLetters(); 
 
         generateGrid.DrawGrid();
     }
 
     private void PlaceFirstLetter()
     {
-        int fx, fy;
         List<Vector2Int> validDirections;
 
         do 
@@ -105,20 +103,27 @@ public class PopulateGrid : MonoBehaviour
             generateGrid.grid[letterPosX, letterPosY] = word[i];
         }
 
-        if (debug) Debug.Log($"[PopulateGrid] fx, fy = ({fx}, {fy}) & direction = ({dir.x}, {dir.y})");
+        if (debug) Debug.Log($"[PopulateGrid] First letter coordinates = ({fx}, {fy}) \nDirection = ({dir.x}, {dir.y})");
     }
 
-    // private void FillRandomLetters()
-    // {
-    //     for (int x = 0; x < gridManager.gridSize.x; x++)
-    //     {
-    //         for (int y = 0; y < gridManager.gridSize.y; y++)
-    //         {
-    //             if (gridManager.grid[x, y] == '.')  
-    //             {
-    //                 gridManager.grid[x, y] = possibleLetters[Random.Range(0, possibleLetters.Length)][0];
-    //             }
-    //         }
-    //     }
-    // }
+    private void FillRandomLetters()
+    {
+
+        List<char> possibleLetters = new List<char>();
+        foreach (char c in word)
+        {
+            possibleLetters.Add(c);
+        }
+
+        for (int x = 0; x < generateGrid.gridSize.x; x++)
+        {
+            for (int y = 0; y < generateGrid.gridSize.y; y++)
+            {
+                if (generateGrid.grid[x, y] == '.')  
+                {
+                    generateGrid.grid[x, y] = possibleLetters[Random.Range(0, possibleLetters.Count)];
+                }
+            }
+        }
+    }
 }
