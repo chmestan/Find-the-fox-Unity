@@ -3,13 +3,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GridManager : MonoBehaviour
+public class GenerateGrid : MonoBehaviour
 {
-    [Header("Word")]
-    [SerializeField] string[] possibleLetters = new string[] { "f", "o", "x" };
 
     [Header("Game Size")]
-    [SerializeField] Vector2 gridSize = new Vector2(5, 5);
+    [SerializeField] internal Vector2Int gridSize = new Vector2Int(5, 5);
     [SerializeField] float gapX = 0.5f;
     [SerializeField] float gapY = 0.5f;
 
@@ -20,31 +18,43 @@ public class GridManager : MonoBehaviour
     private List<Button> gridButtons = new List<Button>();
     public char[,] grid;
 
+    private PopulateGrid populateGrid;
+
+
     void Start()
     {
-        InitializeGrid();
+        populateGrid = GetComponent<PopulateGrid>(); 
+        int wordLength = populateGrid.word.Length;
+
+        if (gridSize.x >= wordLength && gridSize.y >= wordLength)
+        {
+            InitializeGrid(gridSize.x, gridSize.y);
+            populateGrid.PlaceWordAndFillGrid();
+        }
+        else 
+        {
+            Debug.LogError("[GenerateGrid] Grid length and width need to be larger or equal to the word's length.");
+        }
     }
 
-    private void InitializeGrid()
+    private void InitializeGrid(int sizeX, int sizeY)
     {
-        grid = new char[(int)gridSize.x, (int)gridSize.y]; // explicit conversion necessary
-        GenerateGrid(); // grid with placeholder characters
-        InstantiateGrid(); // grid represented by buttons
+        grid = new char[sizeX,sizeY]; 
+        GenerateEmptyGrid(); 
     }
 
-    private void GenerateGrid()
+    private void GenerateEmptyGrid()
     {
         for (int x = 0; x < gridSize.x; x++)
         {
             for (int y = 0; y < gridSize.y; y++)
             {
                 grid[x, y] = '.';
-                // gridData[x, y] = possibleLetters[Random.Range(0, possibleLetters.Length)][0];
             }
         }
     }
 
-    private void InstantiateGrid()
+    internal void DrawGrid()
     {
 
         RectTransform buttonRect = buttonPrefab.GetComponent<RectTransform>();
