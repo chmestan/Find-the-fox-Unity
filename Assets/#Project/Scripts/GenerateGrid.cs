@@ -26,6 +26,7 @@ public class GenerateGrid : MonoBehaviour
     void Start()
     {
         populateGrid = GetComponent<PopulateGrid>(); 
+        
         int wordLength = populateGrid.word.Length;
 
         if (gridSize.x >= wordLength && gridSize.y >= wordLength)

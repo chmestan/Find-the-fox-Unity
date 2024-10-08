@@ -8,16 +8,18 @@ public class PopulateGrid : MonoBehaviour
 
     internal int fx, fy;
     private GenerateGrid generateGrid;
+    private CheckGrid checkGrid;
 
-    [SerializeField, Space(10)] bool debug;
+    [SerializeField, Space(10)] private bool debug;
 
     public void PlaceWordAndFillGrid()
     {
         generateGrid = GetComponent<GenerateGrid>(); 
+        checkGrid = GetComponent<CheckGrid>();
         PlaceFirstLetter();  
         FillRandomLetters(); 
 
-        generateGrid.DrawGrid();
+        checkGrid.CheckAndFixFoxOccurrences();
     }
 
     private void PlaceFirstLetter()
@@ -43,26 +45,8 @@ public class PopulateGrid : MonoBehaviour
 
     private List<Vector2Int> GetValidWordDirections(int fx, int fy)
     {
-        List<Vector2Int> allDirections = new List<Vector2Int>();
+        List<Vector2Int> allDirections = GetAllDirections();
         List<Vector2Int> validDirections = new List<Vector2Int>();
-
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int y = -1; y <= 1; y++)
-            {
-                if (x != 0 || y != 0) allDirections.Add(new Vector2Int(x, y));
-            }
-        }
-
-        // Is equivalent to:
-            // new Vector2Int(-1, -1), // Top-left
-            // new Vector2Int(0, -1),  // Top
-            // new Vector2Int(1, -1),  // Top-right
-            // new Vector2Int(-1, 0),  // Left
-            // new Vector2Int(1, 0),   // Right
-            // new Vector2Int(-1, 1),  // Bottom-left
-            // new Vector2Int(0, 1),   // Bottom
-            // new Vector2Int(1, 1)    // Bottom-right
 
         foreach (Vector2Int dir in allDirections)
         {
@@ -77,7 +61,21 @@ public class PopulateGrid : MonoBehaviour
 
     }
 
-    private bool IsValidDirection(int fx, int fy, Vector2Int dir)
+    internal List<Vector2Int> GetAllDirections()
+    {
+        List<Vector2Int> directions = new List<Vector2Int>();
+
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (dx != 0 || dy != 0) directions.Add(new Vector2Int(dx, dy));
+            }
+        }
+        return directions;
+    }
+
+    internal bool IsValidDirection(int fx, int fy, Vector2Int dir)
     {
 
         for (int i = 1; i < word.Length; i++)  // Start at 1 (from second letter)
